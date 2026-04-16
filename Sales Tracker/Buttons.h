@@ -7,11 +7,11 @@
 class Add : public Button
 {
 public:
-	Add(std::vector<Item>* list = nullptr, float x = 0, float y = 0, float width = 0, float height = 0, std::string text = "") :
-		list(list), Button(x, y, width, height, sf::Color::Green, text) {}
+	Add(std::vector<Item>* list = nullptr, Properties properties = Properties(), std::string text = "") :
+		list(list), Button(properties, text) {}
 
 	void Press() override {
-		Item blank(list->size() * 20, 100, 40, 40);
+		Item blank(Properties(list->size() * 20, 100, 40, 40));
 		list->push_back(blank);
 	}
 
@@ -23,8 +23,8 @@ private:
 class Remove : public Button
 {
 public:
-	Remove(std::vector<Item>* list = nullptr, int index = 0, float x = 0, float y = 0, float width = 0, float height = 0, std::string text = "") :
-		list(list), index(index), Button(x, y, width, height, sf::Color::Red, text) {}
+	Remove(std::vector<Item>* list = nullptr, Properties properties = Properties(), std::string text = "") :
+		list(list), index(index), Button(properties, text) {}
 
 	void Press() override {
 		if (list)

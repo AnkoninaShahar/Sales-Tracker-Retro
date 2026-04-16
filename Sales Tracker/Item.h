@@ -1,7 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-//#include "Button.h"
-//#include "Buttons.h"
+
+#include "Button.h"
+#include "Helper.h"
+
+using namespace Helper;
 
 class Item
 {
@@ -20,40 +23,38 @@ public:
     //    sell = other.sell;
     //}
 
-    Item(float x = 0, float y = 0, float width = 0, float height = 0, sf::Color color = sf::Color::White, double price = 0, std::string name = "") : x(x), y(y), width(width), height(height), color(color) {
-        properties.price = price;
-        properties.name = name;
+    Item(Properties properties, double price = 0, std::string name = "") : properties(properties)
+    {
+        statistics.price = price;
+        statistics.name = name;
     }
 
     void Render(sf::RenderWindow& window) {
-        sf::RectangleShape button({ width, height });
-        button.setPosition({ x, y });
-        button.setFillColor(color);
+        sf::RectangleShape button({ properties.width, properties.height });
+        button.setPosition({ properties.x, properties.y });
+        button.setFillColor(properties.color);
         window.draw(button);
     }
 
     void Sell() {
-        properties.sold++;
+        statistics.sold++;
     }
 
     void Unsell() {
-        properties.sold--;
+        statistics.sold--;
     }
 
 private:
-    float x, y;
-    float width, height;
-    sf::Color color;
-
-    struct Properties {
+    struct Statistics {
         int sold = 0;
         double price = 0;
         std::string name = "";
     };
+    Statistics statistics;
     Properties properties;
 
-    //Button* sell = nullptr;
-    //Button* unsell = nullptr;
-    //Button* remove = nullptr;
+    Button* sell = nullptr;
+    Button* unsell = nullptr;
+    Button* remove = nullptr;
 };
 

@@ -3,18 +3,17 @@
 #include <iostream>
 #include <string>
 
+#include "Helper.h"
+
+using namespace Helper;
+
 class Button
 {
 public:
-	Button(float x = 0, float y = 0, float width = 0, float height = 0, sf::Color color = sf::Color::White, std::string text = "") :
-		x(x), y(y), width(width), height(height), color(color), text(text) {}
+	Button(Properties properties, std::string text = "") : properties(properties), text(text) {}
 
 	Button(Button& other) {
-		x = other.x;
-		y = other.y;
-		width = other.width;
-		height = other.height;
-		color = other.color;
+		properties = other.properties;
 		text = other.text;
 	}
 
@@ -23,24 +22,24 @@ public:
 	virtual void Press() = 0;
 
 	bool IsPressed(float mx, float my) {
-		return (mx >= x && mx <= x + width) && (my >= y && my <= y + height);
+		return (mx >= properties.x && mx <= properties.x + properties.width) && (my >= properties.y && my <= properties.y + properties.height);
 	}
 
 	void Render(sf::RenderWindow& window) {
-		sf::RectangleShape button({width, height});
-		button.setPosition({ x, y });
-		button.setFillColor(color);
+		sf::RectangleShape button({ properties.width, properties.height});
+		button.setPosition({ properties.x, properties.y });
+		button.setFillColor(properties.color);
 		window.draw(button);
 	}
 
 	void SetPosition(float x, float y) {
-		this->x = x;
-		this->y = y;
+		this->properties.x = x;
+		this->properties.y = y;
 	}
 
 	void SetSize(float width, float height) {
-		this->width = width;
-		this->height = height;
+		this->properties.width = width;
+		this->properties.height = height;
 	}
 	
 	void SetText(std::string text) {
@@ -56,13 +55,11 @@ public:
 	}
 
 protected:
-	float x, y;
-	float width, height;
+	Properties properties;
 	std::string text;
-	sf::Color color;
 
 	std::string ToString() const {
-		return "POSITION: ( " + std::to_string(x) + ", " + std::to_string(y) + " )\tSIZE: " + std::to_string(width) + "x" + std::to_string(height) + "\n";
+		return "POSITION: ( " + std::to_string(properties.x) + ", " + std::to_string(properties.y) + " )\tSIZE: " + std::to_string(properties.width) + "x" + std::to_string(properties.height) + "\n";
 	}
 };
 
