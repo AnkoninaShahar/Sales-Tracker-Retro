@@ -10,7 +10,7 @@ using namespace Helper;
 class Button
 {
 public:
-	Button(Properties properties, std::string text = "") : properties(properties), text(text) {}
+	Button(Properties properties = Properties(), std::string text = "") : properties(properties), text(text) {}
 
 	Button(Button& other) {
 		properties = other.properties;
@@ -21,8 +21,17 @@ public:
 
 	virtual void Press() = 0;
 
-	bool IsPressed(float mx, float my) {
-		return (mx >= properties.x && mx <= properties.x + properties.width) && (my >= properties.y && my <= properties.y + properties.height);
+	bool IsPressed(bool pressed, int mx, int my) {
+		bool result = pressed && !held && 
+			(mx >= properties.x && mx <= properties.x + properties.width) && 
+			(my >= properties.y && my <= properties.y + properties.height);
+
+		if (pressed)
+			held = true;
+		else
+			held = false;
+
+		return result;
 	}
 
 	void Render(sf::RenderWindow& window) {
@@ -32,14 +41,19 @@ public:
 		window.draw(button);
 	}
 
+	void Move(float x, float y) {
+		properties.x += x;
+		properties.y += y;
+	}
+
 	void SetPosition(float x, float y) {
-		this->properties.x = x;
-		this->properties.y = y;
+		properties.x = x;
+		properties.y = y;
 	}
 
 	void SetSize(float width, float height) {
-		this->properties.width = width;
-		this->properties.height = height;
+		properties.width = width;
+		properties.height = height;
 	}
 	
 	void SetText(std::string text) {
@@ -61,5 +75,8 @@ protected:
 	std::string ToString() const {
 		return "POSITION: ( " + std::to_string(properties.x) + ", " + std::to_string(properties.y) + " )\tSIZE: " + std::to_string(properties.width) + "x" + std::to_string(properties.height) + "\n";
 	}
+
+private:
+	bool held = false;
 };
 
