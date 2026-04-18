@@ -10,8 +10,17 @@ public:
 	Remove(std::vector<Item*>& list, Properties properties = Properties(), std::string text = "") :
 		list(list), Button(properties, text) {}
 
+	~Remove() {
+		if (item != nullptr) {
+			item = nullptr;
+			delete item;
+		}
+	}
+
 	void Press() override {
 		list.erase(std::remove(list.begin(), list.end(), item), list.end());
+		item = nullptr;
+		delete item;
 	}
 
 	void SetItem(Item* item) {
@@ -28,6 +37,13 @@ class Sell : public Button
 {
 public:
 	using Button::Button;
+
+	~Sell() {
+		if (item != nullptr) {
+			item = nullptr;
+			delete item;
+		}
+	}
 
 	void Press() override {
 		item->Sell();
@@ -46,6 +62,13 @@ class Unsell : public Button
 {
 public:
 	using Button::Button;
+
+	~Unsell() {
+		if (item != nullptr) {
+			item = nullptr;
+			delete item;
+		}
+	}
 
 	void Press() override {
 		item->Unsell();

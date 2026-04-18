@@ -26,13 +26,25 @@ public:
         remove = other.remove;
     }
 
-    void Interact(bool pressed, int mx, int my) {
+    ~Item() {
+        if (sell != nullptr)
+            delete sell;
+        if (unsell != nullptr)
+            delete unsell;
+        if (remove != nullptr)
+            delete remove;
+    }
+
+    bool Interact(bool pressed, int mx, int my) {
         if (sell->IsPressed(pressed, mx, my))
             sell->Press();
         if (unsell->IsPressed(pressed, mx, my))
             unsell->Press();
-        if (remove->IsPressed(pressed, mx, my))
+        if (remove->IsPressed(pressed, mx, my)) {
             remove->Press();
+            return true;
+        }
+        return false;
     }
 
     void Render(sf::RenderWindow& window) {
@@ -90,11 +102,11 @@ public:
         properties.y = y;
 
         if (sell != nullptr)
-            sell->SetPosition(properties.x + 5, properties.y + 5);
+            sell->SetPosition(x + 5, y + 5);
         if (unsell != nullptr)
-            unsell->SetPosition(properties.x + 55, properties.y + 5);
+            unsell->SetPosition(x + 55, y + 5);
         if (remove != nullptr)
-            remove->SetPosition(properties.x + 640, properties.y + 5);
+            remove->SetPosition(x + 640, y + 5);
     }
 
     bool operator==(const Item& other) const {
