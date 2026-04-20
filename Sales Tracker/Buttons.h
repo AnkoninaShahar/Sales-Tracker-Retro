@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "Button.h"
+#include "TextBox.h"
 #include "Item.h"
 
 class Remove : public Button
@@ -91,11 +92,15 @@ public:
 
 	void Press() override {
 		Properties itemProps(properties.x, 0, 700, 60);
+
 		Properties sellProps(5, 5, 50, 50, sf::Color::Green);
 		Properties unsellProps(55, 5, 50, 50, sf::Color::Red);
 		Properties removeProps(640, 5, 50, 50, sf::Color::Red);
 
-		Item* blank = new Item(itemProps, 9.95, "BLANK");
+		Properties nameProps(0, 0, 100, 50, sf::Color::Blue);
+		Properties priceProps(0, 0, 100, 50, sf::Color::Blue);
+
+		Item* blank = new Item(itemProps);
 
 		Sell* sell = new Sell(sellProps);
 		sell->SetItem(blank);
@@ -103,8 +108,11 @@ public:
 		unsell->SetItem(blank);
 		Remove* remove = new Remove(list, removeProps);
 		remove->SetItem(blank);
-
 		blank->SetButtons(sell, unsell, remove);
+
+		TextBox* name = new TextBox(nameProps);
+		TextBox* price = new TextBox(priceProps, "$0.00");
+		blank->SetTextBoxes(name, price);
 
 		list.push_back(blank);
 	}

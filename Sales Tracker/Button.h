@@ -34,7 +34,7 @@ public:
 		return result;
 	}
 
-	void Render(sf::RenderWindow& window) {
+	virtual void Render(sf::RenderWindow& window) {
 		sf::RectangleShape button({ properties.width, properties.height});
 		button.setPosition({ properties.x, properties.y });
 		button.setFillColor(properties.color);

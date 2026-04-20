@@ -12,6 +12,18 @@ int main()
         {
             if (event->is<sf::Event::Closed>())
                 window.close();
+
+            if (const auto* mouseWheel = event->getIf<sf::Event::MouseWheelScrolled>())
+                screen.Scroll(mouseWheel->delta, window);
+            else
+                screen.ResetDeltaScroll();
+
+            if (event->is<sf::Event::MouseButtonPressed>())
+                screen.EndEditing();
+
+            if (const auto* keyboard = event->getIf<sf::Event::TextEntered>())
+                screen.EditItem(keyboard->unicode);
+          
         }
 
         window.clear();

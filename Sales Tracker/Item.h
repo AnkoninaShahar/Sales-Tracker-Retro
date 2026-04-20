@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "Button.h"
+#include "TextBox.h"
 #include "Helper.h"
 
 using namespace Helper;
@@ -24,6 +25,9 @@ public:
         sell = other.sell;
         unsell = other.unsell;
         remove = other.remove;
+
+        nameBox = other.nameBox;
+        priceBox = other.priceBox;
     }
 
     ~Item() {
@@ -33,6 +37,11 @@ public:
             delete unsell;
         if (remove != nullptr)
             delete remove;
+
+        if (nameBox != nullptr)
+            delete nameBox;
+        if (priceBox != nullptr)
+            delete priceBox;
     }
 
     bool Interact(bool pressed, int mx, int my) {
@@ -44,6 +53,12 @@ public:
             remove->Press();
             return true;
         }
+
+        if (nameBox->IsPressed(pressed, mx, my))
+            nameBox->Press();
+        if (priceBox->IsPressed(pressed, mx, my))
+            priceBox->Press();
+
         return false;
     }
 
@@ -55,23 +70,23 @@ public:
 
         sf::Font font;
         if (font.openFromFile("Fonts\\Thraex.ttf")) {
-            sf::Text text(font, profile.name);
-            text.setCharacterSize(30);
-            text.setFillColor(sf::Color::Black);
-            text.setPosition({ properties.x + 150, properties.y + 5 });
+            //sf::Text text(font, profile.name);
+            //text.setCharacterSize(30);
+            //text.setFillColor(sf::Color::Black);
+            //text.setPosition({ properties.x + 150, properties.y + 5 });
 
-            sf::Text price(font, "$" + std::to_string(profile.price));
-            price.setCharacterSize(30);
-            price.setFillColor(sf::Color::Black);
-            price.setPosition({ properties.x + 300, properties.y + 5 });
+            //sf::Text price(font, "$" + std::to_string(profile.price));
+            //price.setCharacterSize(30);
+            //price.setFillColor(sf::Color::Black);
+            //price.setPosition({ properties.x + 300, properties.y + 5 });
 
             sf::Text sold(font, "Sold " + std::to_string(profile.sold));
             sold.setCharacterSize(30);
             sold.setFillColor(sf::Color::Black);
             sold.setPosition({ properties.x + 500, properties.y + 5 });
 
-            window.draw(text);
-            window.draw(price);
+            //window.draw(text);
+            //window.draw(price);
             window.draw(sold);
         }
 
@@ -81,6 +96,21 @@ public:
             unsell->Render(window);
         if (remove != nullptr)
             remove->Render(window);
+
+        if (nameBox != nullptr)
+            nameBox->Render(window);
+        if (priceBox != nullptr)
+            priceBox->Render(window);
+    }
+
+    void Edit(char character) {
+        nameBox->Edit(character);
+        priceBox->Edit(character);
+    }
+
+    void EndEdit() {
+        nameBox->ResetEditing();
+        priceBox->ResetEditing();
     }
 
     void Sell() {
@@ -97,6 +127,11 @@ public:
         this->remove = remove;
     }
 
+    void SetTextBoxes(TextBox* name, TextBox* price) {
+        this->nameBox = name;
+        this->priceBox = price;
+    }
+
     void SetPosition(float x, float y) {
         properties.x = x;
         properties.y = y;
@@ -107,13 +142,17 @@ public:
             unsell->SetPosition(x + 55, y + 5);
         if (remove != nullptr)
             remove->SetPosition(x + 640, y + 5);
+
+        if (nameBox != nullptr)
+            nameBox->SetPosition(x + 150, y + 5);
+        if (priceBox != nullptr)
+            priceBox->SetPosition(x + 300, y + 5);
     }
 
     bool operator==(const Item& other) const {
         std::cout << this << "\t" << &other << std::endl;
         return this == &other;
     }
-    
 
 private:
     struct Profile {
@@ -127,5 +166,8 @@ private:
     Button* sell = nullptr;
     Button* unsell = nullptr;
     Button* remove = nullptr;
+
+    TextBox* nameBox = nullptr;
+    TextBox* priceBox = nullptr;
 };
 
