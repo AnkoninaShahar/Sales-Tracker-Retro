@@ -87,8 +87,7 @@ class Add : public Button
 {
 public:
 	Add(std::vector<Item*>& list, Properties properties = Properties(), std::string text = "") :
-		list(list), Button(properties, text) {
-	}
+		list(list), Button(properties, text) {}
 
 	void Press() override {
 		Properties itemProps(properties.x, 0, 700, 60);

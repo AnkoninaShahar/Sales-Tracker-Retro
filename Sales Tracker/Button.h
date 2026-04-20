@@ -21,7 +21,7 @@ public:
 
 	virtual void Press() = 0;
 
-	bool IsPressed(bool pressed, int mx, int my) {
+	virtual bool IsPressed(bool pressed, int mx, int my) {
 		bool result = pressed && !held && 
 			(mx >= properties.x && mx <= properties.x + properties.width) && 
 			(my >= properties.y && my <= properties.y + properties.height);
@@ -58,6 +58,18 @@ public:
 	
 	void SetText(std::string text) {
 		this->text = text;
+	}
+
+	sf::Vector2f GetPosition() {
+		return sf::Vector2f(properties.x, properties.y);
+	}
+
+	sf::Vector2f GetSize() {
+		return sf::Vector2f(properties.width, properties.height);
+	}
+
+	std::string GetText() {
+		return text;
 	}
 
 	void Print() {

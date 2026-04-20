@@ -149,6 +149,7 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
+    <ClCompile Include="ScrollBar.cpp" />
     <ClCompile Include="TextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,7 @@
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ScreenManager.h" />
+    <ClInclude Include="ScrollBar.h" />
     <ClInclude Include="TextBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

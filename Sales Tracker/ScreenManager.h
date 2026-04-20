@@ -6,13 +6,19 @@
 #include "Button.h"
 #include "Buttons.h"
 #include "Helper.h"
+#include "ScrollBar.h"
 
 using namespace Helper;
 
 class ScreenManager
 {
 public:
-	ScreenManager() : items(std::vector<Item*>()), add(items, Properties(100, 100, 200, 100, sf::Color::Green)) {
+	ScreenManager() : 
+		items(std::vector<Item*>()), 
+		add(items, Properties(100, 100, 200, 100, sf::Color::Green)),
+		bar(Properties(840, 240, 40, 300, sf::Color::Green), 
+			Properties(845, 245, 30, 50, sf::Color::Blue))
+	{
 		scrollView.setSize({ 700, 330 });
 		scrollView.setViewport(sf::FloatRect({ 0.2f, 0.4f }, { 0.5f, 0.5f }));
 		scroll = 0;
@@ -28,6 +34,8 @@ public:
 	void Render(sf::RenderWindow& window) {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		RenderButtons(mousePos, window);
+		
+		bar.Render(window);
 
 		sf::FloatRect rect = sf::FloatRect(
 			{ scrollView.getViewport().position.x * window.getSize().x, scrollView.getViewport().position.y * window.getSize().y },
@@ -69,6 +77,7 @@ public:
 private:
 	std::vector<Item*> items;
 	Add add;
+	ScrollBar bar;
 
 	sf::View scrollView;
 	float scroll, deltaScroll;
