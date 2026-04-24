@@ -4,47 +4,16 @@
 class TextBox : public Button
 {
 public:
-	TextBox(Properties properties = Properties(), std::string text = "", std::string empty = "") : 
-		empty(empty), Button(properties, text) {}
-
+	TextBox(Properties properties = Properties(), std::string empty = "", std::string text = "", std::string font = "Fonts\\Thraex.ttf");
 	~TextBox() {}
 
-	void Press() override {
-		editing = true;
-	}
+	void Press() override;
+	bool IsPressed(bool pressed, int mx, int my) override;
 
-	void Edit(char character) {
-		if (editing) {
-			if (character == '\b') {
-				if (text.size() != 0)
-					text.erase(text.size() - 1);
-			}
-			else if (character == '\r')
-				editing = false;
-			else if (character < 128)
-				text += character;
-		}
-	}
+	void Edit(char character);
+	void ResetEditing();
 
-	void Render(sf::RenderWindow& window) override {
-		sf::Font font;
-		if (font.openFromFile("Fonts\\Thraex.ttf")) {
-			sf::Text string(font, text);
-			if (text != "") 
-				string.setFillColor(sf::Color::Black);
-			else {
-				string.setString("(Click here to edit)");
-				string.setFillColor(sf::Color::Magenta);
-			}
-			string.setCharacterSize(30);
-			string.setPosition({ properties.x, properties.y });
-			window.draw(string);
-		}
-	}
-
-	void ResetEditing() {
-		editing = false;
-	}
+	void Render(sf::RenderWindow& window) override;
 
 private:
 	bool editing = false;

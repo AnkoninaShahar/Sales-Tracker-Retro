@@ -30,10 +30,10 @@
     <ClCompile Include="Item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper.cpp">
+    <ClCompile Include="TextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextBox.cpp">
+    <ClCompile Include="ScrollBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

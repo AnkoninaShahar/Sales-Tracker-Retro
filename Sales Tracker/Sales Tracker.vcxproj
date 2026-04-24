@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Buttons.cpp" />
-    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenManager.cpp" />

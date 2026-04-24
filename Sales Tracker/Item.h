@@ -12,114 +12,18 @@ using namespace Helper;
 class Item
 {
 public:
-    Item(Properties properties = Properties(), double price = 0, std::string name = "") :
-        properties(properties) {
-        profile.price = price;
-        profile.name = name;
-    }
+    Item(Properties properties = Properties(), double price = 0, std::string name = "", std::string font = "Fonts\\Thraex.ttf");
+    Item(const Item& other);
+    ~Item();
 
-    Item(const Item& other) {
-        properties = other.properties;
-        profile = other.profile;
+    bool Interact(bool pressed, int mx, int my);
 
-        sell = other.sell;
-        unsell = other.unsell;
-        remove = other.remove;
+    void Edit(char character);
+    void EndEdit();
 
-        nameBox = other.nameBox;
-        priceBox = other.priceBox;
-    }
+    void Sale(int amount);
 
-    ~Item() {
-        if (sell != nullptr)
-            delete sell;
-        if (unsell != nullptr)
-            delete unsell;
-        if (remove != nullptr)
-            delete remove;
-
-        if (nameBox != nullptr)
-            delete nameBox;
-        if (priceBox != nullptr)
-            delete priceBox;
-    }
-
-    bool Interact(bool pressed, int mx, int my) {
-        if (sell->IsPressed(pressed, mx, my))
-            sell->Press();
-        if (unsell->IsPressed(pressed, mx, my))
-            unsell->Press();
-        if (remove->IsPressed(pressed, mx, my)) {
-            remove->Press();
-            return true;
-        }
-
-        if (nameBox->IsPressed(pressed, mx, my))
-            nameBox->Press();
-        if (priceBox->IsPressed(pressed, mx, my))
-            priceBox->Press();
-
-        return false;
-    }
-
-    void Render(sf::RenderWindow& window) {
-        sf::RectangleShape item({ properties.width, properties.height });
-        item.setPosition({ properties.x, properties.y });
-        item.setFillColor(properties.color);
-        window.draw(item);
-
-        sf::Font font;
-        if (font.openFromFile("Fonts\\Thraex.ttf")) {
-            //sf::Text text(font, profile.name);
-            //text.setCharacterSize(30);
-            //text.setFillColor(sf::Color::Black);
-            //text.setPosition({ properties.x + 150, properties.y + 5 });
-
-            //sf::Text price(font, "$" + std::to_string(profile.price));
-            //price.setCharacterSize(30);
-            //price.setFillColor(sf::Color::Black);
-            //price.setPosition({ properties.x + 300, properties.y + 5 });
-
-            sf::Text sold(font, "Sold " + std::to_string(profile.sold));
-            sold.setCharacterSize(30);
-            sold.setFillColor(sf::Color::Black);
-            sold.setPosition({ properties.x + 500, properties.y + 5 });
-
-            //window.draw(text);
-            //window.draw(price);
-            window.draw(sold);
-        }
-
-        if (sell != nullptr)
-            sell->Render(window);
-        if (unsell != nullptr)
-            unsell->Render(window);
-        if (remove != nullptr)
-            remove->Render(window);
-
-        if (nameBox != nullptr)
-            nameBox->Render(window);
-        if (priceBox != nullptr)
-            priceBox->Render(window);
-    }
-
-    void Edit(char character) {
-        nameBox->Edit(character);
-        priceBox->Edit(character);
-    }
-
-    void EndEdit() {
-        nameBox->ResetEditing();
-        priceBox->ResetEditing();
-    }
-
-    void Sell() {
-        profile.sold++;
-    }
-
-    void Unsell() {
-        profile.sold--;
-    }
+    void Render(sf::RenderWindow& window);
 
     void SetButtons(Button* sell, Button* unsell, Button* remove) {
         this->sell = sell;
@@ -162,6 +66,8 @@ private:
     };
     Profile profile;
     Properties properties;
+
+    sf::Font font;
 
     Button* sell = nullptr;
     Button* unsell = nullptr;

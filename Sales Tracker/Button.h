@@ -10,41 +10,16 @@ using namespace Helper;
 class Button
 {
 public:
-	Button(Properties properties = Properties(), std::string text = "") : properties(properties), text(text) {}
-
-	Button(Button& other) {
-		properties = other.properties;
-		text = other.text;
-	}
-
-	virtual ~Button() {}
+	Button(Properties properties = Properties(), std::string text = "", std::string font = "Fonts\\Thraex.ttf");
+	Button(Button& other);
+	virtual ~Button();
 
 	virtual void Press() = 0;
+	virtual bool IsPressed(bool pressed, int mx, int my);
 
-	virtual bool IsPressed(bool pressed, int mx, int my) {
-		bool result = pressed && !held && 
-			(mx >= properties.x && mx <= properties.x + properties.width) && 
-			(my >= properties.y && my <= properties.y + properties.height);
+	virtual void Move(float x, float y);
 
-		if (pressed)
-			held = true;
-		else
-			held = false;
-
-		return result;
-	}
-
-	virtual void Render(sf::RenderWindow& window) {
-		sf::RectangleShape button({ properties.width, properties.height});
-		button.setPosition({ properties.x, properties.y });
-		button.setFillColor(properties.color);
-		window.draw(button);
-	}
-
-	virtual void Move(float x, float y) {
-		properties.x += x;
-		properties.y += y;
-	}
+	virtual void Render(sf::RenderWindow& window);
 
 	virtual void SetPosition(float x, float y) {
 		properties.x = x;
@@ -72,9 +47,7 @@ public:
 		return text;
 	}
 
-	virtual void Print() {
-		std::cout << ToString() << std::endl;
-	}
+	virtual void Print();
 
 	friend std::ostream& operator<<(std::ostream& os, const Button& button) {
 		return os << button.ToString() << std::endl;
@@ -82,11 +55,11 @@ public:
 
 protected:
 	Properties properties;
-	std::string text;
 
-	virtual std::string ToString() const {
-		return "POSITION: ( " + std::to_string(properties.x) + ", " + std::to_string(properties.y) + " )\tSIZE: " + std::to_string(properties.width) + "x" + std::to_string(properties.height) + "\n";
-	}
+	std::string text;
+	sf::Font font;
+
+	virtual std::string ToString() const;
 
 private:
 	bool held = false;
