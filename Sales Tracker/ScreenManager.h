@@ -35,7 +35,14 @@ public:
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 		RenderButtons(mousePos, window);
 		
+		float length = 300;
+		for (int i = 0; i < static_cast<int>(items.size() - 4); ++i) {
+			length -= length / (i + 4);
+		}
+		bar.SetSize(bar.GetSize().x, length);
 		bar.Render(window);
+		if (bar.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), mousePos.x, mousePos.y))
+			bar.Press();
 
 		sf::FloatRect rect = sf::FloatRect(
 			{ scrollView.getViewport().position.x * window.getSize().x, scrollView.getViewport().position.y * window.getSize().y },
@@ -56,6 +63,7 @@ public:
 			this->scroll += scroll * 10;
 			deltaScroll = scroll;
 		}
+		bar.Move(0, -scroll * 10);
 	}
 
 	void ResetDeltaScroll() {

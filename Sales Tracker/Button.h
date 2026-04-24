@@ -41,38 +41,38 @@ public:
 		window.draw(button);
 	}
 
-	void Move(float x, float y) {
+	virtual void Move(float x, float y) {
 		properties.x += x;
 		properties.y += y;
 	}
 
-	void SetPosition(float x, float y) {
+	virtual void SetPosition(float x, float y) {
 		properties.x = x;
 		properties.y = y;
 	}
 
-	void SetSize(float width, float height) {
+	virtual void SetSize(float width, float height) {
 		properties.width = width;
 		properties.height = height;
 	}
 	
-	void SetText(std::string text) {
+	virtual void SetText(std::string text) {
 		this->text = text;
 	}
 
-	sf::Vector2f GetPosition() {
+	virtual sf::Vector2f GetPosition() {
 		return sf::Vector2f(properties.x, properties.y);
 	}
 
-	sf::Vector2f GetSize() {
+	virtual sf::Vector2f GetSize() {
 		return sf::Vector2f(properties.width, properties.height);
 	}
 
-	std::string GetText() {
+	virtual std::string GetText() {
 		return text;
 	}
 
-	void Print() {
+	virtual void Print() {
 		std::cout << ToString() << std::endl;
 	}
 
@@ -84,7 +84,7 @@ protected:
 	Properties properties;
 	std::string text;
 
-	std::string ToString() const {
+	virtual std::string ToString() const {
 		return "POSITION: ( " + std::to_string(properties.x) + ", " + std::to_string(properties.y) + " )\tSIZE: " + std::to_string(properties.width) + "x" + std::to_string(properties.height) + "\n";
 	}
 
