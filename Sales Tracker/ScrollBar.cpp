@@ -14,9 +14,14 @@ bool ScrollBar::IsPressed(bool pressed, int mx, int my) {
 		(mx >= background.x && mx <= background.x + background.width) &&
 		(my >= background.y && my <= background.y + background.height);
 
+	if (result)
+		held = true;
+	if (!pressed)	
+		held = false;
+
 	this->my = my;
 
-	return result;
+	return result || held;
 }
 
 void ScrollBar::Move(float x, float y) {

@@ -17,7 +17,6 @@ public:
 	~ScreenManager();
 
 	void Scroll(float scroll, sf::RenderWindow& window);
-	void ResetDeltaScroll();
 
 	void EditItem(char character);
 	void EndEditing();

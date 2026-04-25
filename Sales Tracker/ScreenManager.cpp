@@ -66,7 +66,8 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	bar.Render(window);
 	if (bar.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), mousePos.x, mousePos.y)) {
 		bar.Press();
-		scroll = bar.GetScroll();
+		float distance = (items.size() - 4) * 70;
+		scroll = distance * bar.GetScroll() / bar.GetTotalScroll();
 	}
 
 	// RENDER ITEM WINDOW

@@ -10,12 +10,14 @@ void TextBox::Press() {
 }
 
 bool TextBox::IsPressed(bool pressed, int mx, int my) {
-	bool result = Button::IsPressed(pressed, mx, my);
+	bool inBounds = 
+		(mx >= properties.x && mx <= properties.x + properties.width) &&
+		(my >= properties.y && my <= properties.y + properties.height);
 
-	if (pressed && !result)
+	if (pressed && !inBounds && !held)
 		editing = false;
 
-	return result;
+	return Button::IsPressed(pressed, mx, my);
 }
 
 void TextBox::Edit(char character) {
@@ -40,24 +42,23 @@ void TextBox::Render(sf::RenderWindow& window) {
 	rect.setPosition({ properties.x, properties.y });
 
 	sf::Text string(font, text);
-	string.setCharacterSize(30);
-	string.setPosition({ properties.x, properties.y });
 
-	if (editing) {
+	int characterSize = std::min((properties.width * 2.2) / (text.length() + 1), 30.0);
+	string.setCharacterSize(characterSize);
+	string.setPosition({ properties.x, properties.y + properties.height / 4 });
+
+	if (editing)
+		rect.setFillColor(sf::Color::Green);
+	else
+		rect.setFillColor(sf::Color::Yellow);
+
+	if (text != "") {
 		string.setString(text);
 		string.setFillColor(sf::Color::Black);
-		rect.setFillColor(sf::Color::Green);
 	}
 	else {
-		if (text != "") {
-			string.setFillColor(sf::Color::Black);
-			rect.setFillColor(sf::Color::Yellow);
-		}
-		else {
-			string.setString(empty);
-			string.setFillColor(sf::Color::Magenta);
-			rect.setFillColor(sf::Color::Yellow);
-		}
+		string.setString(empty);
+		string.setFillColor(sf::Color::Magenta);
 	}
 
 	window.draw(rect);

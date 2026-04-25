@@ -24,8 +24,11 @@ public:
 	}
 
 	float GetScroll() {
-		float relativeY = background.y - properties.y;
-		return (relativeY);
+		return background.y - properties.y;
+	}
+
+	float GetTotalScroll() {
+		return background.y - properties.height;
 	}
 
 private:

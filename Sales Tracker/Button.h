@@ -59,9 +59,8 @@ protected:
 	std::string text;
 	sf::Font font;
 
-	virtual std::string ToString() const;
-
-private:
 	bool held = false;
+
+	virtual std::string ToString() const;
 };
 
