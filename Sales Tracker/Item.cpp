@@ -76,16 +76,22 @@ void Item::Sale(int amount) {
 }
 
 void Item::Render(sf::RenderWindow& window) {
+    int olRed = properties.color.r * 0.35;
+    int olGreen = properties.color.g * 0.35;
+    int olBlue = properties.color.b * 0.35;
+
     sf::RectangleShape item({ properties.width, properties.height });
     item.setPosition({ properties.x, properties.y });
-    item.setFillColor(sf::Color::Cyan);
+    item.setFillColor(sf::Color(194, 194, 194));
+    item.setOutlineColor(sf::Color(olRed, olGreen, olBlue));
+    item.setOutlineThickness(5);
     window.draw(item);
 
 
     sf::Text sold(font, "Sold " + std::to_string(profile.sold));
-    sold.setCharacterSize(30);
+    sold.setCharacterSize(25);
     sold.setFillColor(sf::Color::Black);
-    sold.setPosition({ properties.x + 500, properties.y + 5 });
+    sold.setPosition({ properties.x + 535, properties.y + 12 });
     window.draw(sold);
 
 

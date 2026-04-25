@@ -40,25 +40,26 @@ void TextBox::ResetEditing() {
 void TextBox::Render(sf::RenderWindow& window) {
 	sf::RectangleShape rect({ properties.width, properties.height });
 	rect.setPosition({ properties.x, properties.y });
+	rect.setFillColor(sf::Color(227, 227, 227));
+	rect.setOutlineThickness(5);
 
 	sf::Text string(font, text);
-
 	int characterSize = std::min((properties.width * 2.2) / (text.length() + 1), 30.0);
 	string.setCharacterSize(characterSize);
-	string.setPosition({ properties.x, properties.y + properties.height / 4 });
+	string.setPosition({ properties.x, properties.y });
 
 	if (editing)
-		rect.setFillColor(sf::Color::Green);
+		rect.setOutlineColor(sf::Color(184, 48, 48));
 	else
-		rect.setFillColor(sf::Color::Yellow);
+		rect.setOutlineColor(sf::Color(46, 46, 46));
 
 	if (text != "") {
 		string.setString(text);
-		string.setFillColor(sf::Color::Black);
+		string.setFillColor(sf::Color(59, 59, 59));
 	}
 	else {
 		string.setString(empty);
-		string.setFillColor(sf::Color::Magenta);
+		string.setFillColor(sf::Color(138, 138, 138));
 	}
 
 	window.draw(rect);

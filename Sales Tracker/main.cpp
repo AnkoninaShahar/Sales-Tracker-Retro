@@ -3,7 +3,7 @@
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({ 1200, 600 }), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode({ 1120, 600 }), "Sale Tracker");
     ScreenManager screen;
 
     while (window.isOpen())

@@ -4,12 +4,12 @@
 
 ScreenManager::ScreenManager() :
 	items(std::vector<Item*>()),
-	add(items, Properties(100, 100, 200, 100, sf::Color::Green)),
-	bar(Properties(840, 240, 40, 300, sf::Color::Green),
-		Properties(845, 245, 30, 50, sf::Color::Blue))
+	add(items, Properties(230, 90, 200, 50, sf::Color(54, 176, 46)), "ADD ITEM"),
+	bar(Properties(828, 180, 40, 300, sf::Color(18, 18, 18)),
+		Properties(833, 185, 30, 50, sf::Color(166, 166, 166)))
 {
 	scrollView.setSize({ 700, 330 });
-	scrollView.setViewport(sf::FloatRect({ 0.2f, 0.4f }, { 0.5f, 0.5f }));
+	scrollView.setViewport(sf::FloatRect({ 0.2f, 0.3f }, { 0.54f, 0.5f }));
 	scroll = 0;
 	prevScroll = 0;
 }
@@ -21,12 +21,8 @@ ScreenManager::~ScreenManager() {
 }
 
 void ScreenManager::Scroll(float scroll, sf::RenderWindow& window) {
-	int maxScroll = -70 * static_cast<int>((items.size() - 5)) - 30;
-	if (this->scroll <= 0 || this->scroll >= maxScroll) {
-		if (MouseInScrollWindow(sf::Mouse::getPosition(window), window) && items.size() > 4)
-			this->scroll += scroll * 10;
-		bar.Move(0, -scroll * 10);
-	}
+	if (MouseInScrollWindow(sf::Mouse::getPosition(window), window) && items.size() > 4)
+		this->scroll += scroll * 10;
 }
 
 void ScreenManager::EditItem(char character) {
@@ -35,20 +31,88 @@ void ScreenManager::EditItem(char character) {
 	}
 }
 
-void ScreenManager::EndEditing() {
-	for (Item* item : items) {
-		item->EndEdit();
-	}
-}
-
 void ScreenManager::Render(sf::RenderWindow& window) {
-	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-	RenderUI(mousePos, window);
+	if (items.size() < 5)
+		scroll = 0;
+
+	RenderBackground(window);
+	RenderUI(sf::Mouse::getPosition(window), window);
 
 	CorrectScroll();
 }
 
+// Private
+
+void ScreenManager::RenderBackground(sf::RenderWindow& window) {
+	window.setView(window.getDefaultView());
+
+	sf::RectangleShape border({ static_cast<float>(window.getSize().x - 20), static_cast<float>(window.getSize().y - 20) });
+	border.setPosition({ 10, 10 });
+	border.setOutlineThickness(50);
+	border.setOutlineColor(sf::Color::Black);
+	border.setFillColor(sf::Color::Transparent);
+
+	sf::RectangleShape border2({ static_cast<float>(window.getSize().x - 60), static_cast<float>(window.getSize().y - 60) });
+	border2.setPosition({ 30, 30 });
+	border2.setOutlineThickness(50);
+	border2.setOutlineColor(sf::Color(0, 0, 0, 100));
+	border2.setFillColor(sf::Color::Transparent);
+
+	sf::RectangleShape border3({ static_cast<float>(window.getSize().x - 100), static_cast<float>(window.getSize().y - 100) });
+	border3.setPosition({ 50, 50 });
+	border3.setOutlineThickness(100);
+	border3.setOutlineColor(sf::Color(0, 0, 0, 50));
+	border3.setFillColor(sf::Color::Transparent);
+
+	sf::FloatRect rect = sf::FloatRect(
+		{ scrollView.getViewport().position.x * window.getSize().x, scrollView.getViewport().position.y * window.getSize().y },
+		{ scrollView.getViewport().size.x * window.getSize().x, scrollView.getViewport().size.y * window.getSize().y }
+	);
+
+	sf::ConvexShape tint1(4);
+	tint1.setPoint(0, { rect.position.x - 20, rect.position.y - 20 });
+	tint1.setPoint(1, { rect.position.x + rect.size.x + 60, rect.position.y - 20 });
+	tint1.setPoint(2, { rect.position.x + rect.size.x + 40, rect.position.y });
+	tint1.setPoint(3, { rect.position.x, rect.position.y });
+	tint1.setFillColor(sf::Color(255, 255, 255, 75));
+	tint1.setOutlineColor(sf::Color::Transparent);
+
+	sf::ConvexShape tint2(4);
+	tint2.setPoint(0, { rect.position.x + rect.size.x + 60, rect.position.y - 20 });
+	tint2.setPoint(1, { rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + 20 });
+	tint2.setPoint(2, { rect.position.x + rect.size.x + 40, rect.position.y + rect.size.y });
+	tint2.setPoint(3, { rect.position.x + rect.size.x + 40, rect.position.y });
+	tint2.setFillColor(sf::Color(200, 200, 200, 75));
+	tint2.setOutlineColor(sf::Color::Transparent);
+
+	sf::ConvexShape shade1(4);
+	shade1.setPoint(0, { rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + 20 });
+	shade1.setPoint(1, { rect.position.x - 20, rect.position.y + rect.size.y + 20 });
+	shade1.setPoint(2, { rect.position.x, rect.position.y + rect.size.y });
+	shade1.setPoint(3, { rect.position.x + rect.size.x + 40, rect.position.y + rect.size.y });
+	shade1.setFillColor(sf::Color(0, 0, 0, 75));
+	shade1.setOutlineColor(sf::Color::Transparent);
+
+	sf::ConvexShape shade2(4);
+	shade2.setPoint(0, { rect.position.x - 20, rect.position.y + rect.size.y + 20 });
+	shade2.setPoint(1, { rect.position.x - 20, rect.position.y - 20 });
+	shade2.setPoint(2, { rect.position.x, rect.position.y });
+	shade2.setPoint(3, { rect.position.x, rect.position.y + rect.size.y });
+	shade2.setFillColor(sf::Color(50, 50, 50, 75));
+	shade2.setOutlineColor(sf::Color::Transparent);
+
+	window.clear(sf::Color(94, 85, 105));
+	window.draw(border);
+	window.draw(border2);
+	window.draw(border3);
+	window.draw(tint1);
+	window.draw(tint2);
+	window.draw(shade1);
+	window.draw(shade2);
+}
+
 void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
+
 	// RENDER ADD BUTTON
 	//_____________________________________________________
 	window.setView(window.getDefaultView());
@@ -58,7 +122,7 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 
 	// RENDER SCROLL BAR
 	//_____________________________________________________
-	float length = 300;
+	float length = 290;
 	for (int i = 0; i < static_cast<int>(items.size() - 4); ++i) {
 		length -= length / (i + 4);
 	}
@@ -66,9 +130,11 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	bar.Render(window);
 	if (bar.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), mousePos.x, mousePos.y)) {
 		bar.Press();
-		float distance = (items.size() - 4) * 70;
-		scroll = distance * bar.GetScroll() / bar.GetTotalScroll();
+		float distance = -static_cast<float>(items.size() - 4.5) * 70;
+		scroll = distance * bar.GetScrollPercent();
 	}
+	else
+		bar.SetPosition(bar.GetPosition().x, -(this->scroll / ((items.size() - 4.25) * 70)) * (300 - bar.GetSize().y) + 180);
 
 	// RENDER ITEM WINDOW
 	//_____________________________________________________
@@ -78,6 +144,7 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	);
 	sf::RectangleShape shape = sf::RectangleShape({ rect.size.x, rect.size.y });
 	shape.setPosition({ rect.position.x, rect.position.y });
+	shape.setFillColor(sf::Color(0, 0, 0, 150));
 	window.draw(shape);
 
 	// RENDER ITEMS
@@ -97,8 +164,6 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	}
 }
 
-// Private
-
 bool ScreenManager::MouseInScrollWindow(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	sf::FloatRect rect = scrollView.getViewport();
 	return (mousePos.x >= rect.position.x * window.getSize().x && mousePos.x <= (rect.position.x + rect.size.x) * window.getSize().x)
@@ -106,14 +171,22 @@ bool ScreenManager::MouseInScrollWindow(sf::Vector2i mousePos, sf::RenderWindow&
 }
 
 void ScreenManager::CorrectScroll() {
-	int maxScroll = -70 * static_cast<int>((items.size() - 5)) - 30;
-	if (prevScroll == scroll) {
-		if (scroll > 0)
-			scroll -= scroll / 5;
-		else if (scroll < maxScroll)
-			scroll -= (scroll - maxScroll) / 5;
+	if (items.size() > 4) {
+		int maxScroll = 70 * static_cast<int>((items.size() - 4)) - 30;
+		if (scrollTime >= 35 && prevScroll == scroll) {
+			if (-scroll < 0)
+				scroll -= scroll / 50;
+			else if (-scroll > maxScroll)
+				scroll -= (maxScroll + scroll) / 50;
+			prevScroll = scroll;
+		}
+		else if (prevScroll == scroll) {
+			scrollTime++;
+		}
+		else {
+			scrollTime = 0;
+			prevScroll = scroll;
+		}
 	}
-	else
-		prevScroll = scroll;
 
 }

@@ -19,7 +19,6 @@ public:
 	void Scroll(float scroll, sf::RenderWindow& window);
 
 	void EditItem(char character);
-	void EndEditing();
 
 	void Render(sf::RenderWindow& window);
 
@@ -30,8 +29,10 @@ private:
 
 	sf::View scrollView;
 	float scroll, prevScroll;
+	int scrollTime = 0;
 	bool scrollEdge = false;
 
+	void RenderBackground(sf::RenderWindow& window);
 	void RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window);
 
 	bool MouseInScrollWindow(sf::Vector2i mousePos, sf::RenderWindow& window);

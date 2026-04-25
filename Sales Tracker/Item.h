@@ -41,16 +41,16 @@ public:
         properties.y = y;
 
         if (sell != nullptr)
-            sell->SetPosition(x + 5, y + 5);
+            sell->SetPosition(x + 10, y + 10);
         if (unsell != nullptr)
-            unsell->SetPosition(x + 55, y + 5);
+            unsell->SetPosition(x + 65, y + 10);
         if (remove != nullptr)
-            remove->SetPosition(x + 640, y + 5);
+            remove->SetPosition(x + 640, y + 10);
 
         if (nameBox != nullptr)
-            nameBox->SetPosition(x + 150, y + 5);
+            nameBox->SetPosition(x + 125, y + 12);
         if (priceBox != nullptr)
-            priceBox->SetPosition(x + 300, y + 5);
+            priceBox->SetPosition(x + 445, y + 12);
     }
 
     bool operator==(const Item& other) const {

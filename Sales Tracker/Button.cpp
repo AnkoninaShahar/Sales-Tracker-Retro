@@ -35,10 +35,28 @@ bool Button::IsPressed(bool pressed, int mx, int my) {
 }
 
 void Button::Render(sf::RenderWindow& window) {
+	int olRed = properties.color.r * 0.35;
+	int olGreen = properties.color.g * 0.35;
+	int olBlue = properties.color.b * 0.35;
+
 	sf::RectangleShape button({ properties.width, properties.height });
 	button.setPosition({ properties.x, properties.y });
 	button.setFillColor(properties.color);
+	button.setOutlineColor(sf::Color(olRed, olGreen, olBlue));
+	button.setOutlineThickness(std::min(properties.width, properties.height) / 5);
 	window.draw(button);
+
+	sf::Text string(font, text);
+	string.setCharacterSize(30);
+	string.setOrigin(
+		{ 
+		string.getLocalBounds().position.x + string.getLocalBounds().size.x / 2, 
+		string.getLocalBounds().position.y + string.getLocalBounds().size.y / 2 
+		}
+	);
+	string.setPosition({ properties.x + properties.width / 2, properties.y + properties.height / 2 });
+	string.setFillColor(sf::Color(59, 59, 59));
+	window.draw(string);
 }
 
 void Button::Move(float x, float y) {

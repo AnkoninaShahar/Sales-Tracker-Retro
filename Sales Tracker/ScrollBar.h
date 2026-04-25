@@ -23,12 +23,8 @@ public:
 			Button::SetSize(width, height);
 	}
 
-	float GetScroll() {
-		return background.y - properties.y;
-	}
-
-	float GetTotalScroll() {
-		return background.y - properties.height;
+	float GetScrollPercent() {
+		return (properties.y - background.y) / (background.height - properties.height);
 	}
 
 private:

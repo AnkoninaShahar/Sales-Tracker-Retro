@@ -57,18 +57,18 @@ Add::Add(std::vector<Item*>& list, Properties properties, std::string text, std:
 void Add::Press() {
 	Properties itemProps(properties.x, 0, 700, 60);
 
-	Properties sellProps(5, 5, 50, 50, sf::Color::Green);
-	Properties unsellProps(55, 5, 50, 50, sf::Color::Red);
-	Properties removeProps(640, 5, 50, 50, sf::Color::Red);
+	Properties sellProps(0, 0, 40, 40, sf::Color(54, 176, 46));
+	Properties unsellProps(0, 0, 40, 40, sf::Color(184, 48, 48));
+	Properties removeProps(0, 0, 40, 40, sf::Color(184, 48, 48));
 
-	Properties nameProps(0, 0, 100, 50, sf::Color::Blue);
-	Properties priceProps(0, 0, 100, 50, sf::Color::Blue);
+	Properties nameProps(0, 0, 300, 35, sf::Color::Blue);
+	Properties priceProps(0, 0, 75, 35, sf::Color::Blue);
 
 	Item* blank = new Item(itemProps);
 
-	Sale* sell = new Sale(blank, 1, sellProps);
-	Sale* unsell = new Sale(blank, -1, unsellProps);
-	Remove* remove = new Remove(list, blank, removeProps);
+	Sale* sell = new Sale(blank, 1, sellProps, "$");
+	Sale* unsell = new Sale(blank, -1, unsellProps, "-");
+	Remove* remove = new Remove(list, blank, removeProps, "X");
 	blank->SetButtons(sell, unsell, remove);
 
 	TextBox* name = new TextBox(nameProps, "Blank");
