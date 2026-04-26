@@ -53,6 +53,10 @@ public:
             priceBox->SetPosition(x + 445, y + 12);
     }
 
+    double GetTotal() {
+        return profile.sold * profile.price;
+    }
+
     bool operator==(const Item& other) const {
         std::cout << this << "\t" << &other << std::endl;
         return this == &other;

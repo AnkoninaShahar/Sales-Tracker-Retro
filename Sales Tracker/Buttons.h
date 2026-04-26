@@ -44,4 +44,5 @@ public:
 
 private:
 	std::vector<Item*>& list;
+	std::string fontPath;
 };

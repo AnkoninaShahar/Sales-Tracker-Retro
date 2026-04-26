@@ -4,7 +4,7 @@
 
 ScreenManager::ScreenManager() :
 	items(std::vector<Item*>()),
-	add(items, Properties(230, 90, 200, 50, sf::Color(54, 176, 46)), "ADD ITEM"),
+	add(items, Properties(230, 90, 200, 50, sf::Color(54, 176, 46)), "ADD ITEM", "Fonts\\Shelten.ttf"),
 	bar(Properties(828, 180, 40, 300, sf::Color(18, 18, 18)),
 		Properties(833, 185, 30, 50, sf::Color(166, 166, 166)))
 {
@@ -12,6 +12,25 @@ ScreenManager::ScreenManager() :
 	scrollView.setViewport(sf::FloatRect({ 0.2f, 0.3f }, { 0.54f, 0.5f }));
 	scroll = 0;
 	prevScroll = 0;
+
+	std::string font = "Fonts\\Shelten.ttf";
+	std::string logoPath = "Sprites\\gift_logo.png";
+
+	try {
+		if (!this->font.openFromFile(font))
+			throw "FAILED TO LOAD FONT:\t" + font;
+	}
+	catch (const char* msg) {
+		std::cerr << msg << std::endl;
+	}
+
+	try {
+		if (!logo.loadFromFile(logoPath))
+			throw "FAILED TO LOAD TEXTURE:\t" + logoPath;
+	}
+	catch (const char* msg) {
+		std::cerr << msg << std::endl;
+	}
 }
 
 ScreenManager::~ScreenManager() {
@@ -32,8 +51,10 @@ void ScreenManager::EditItem(char character) {
 }
 
 void ScreenManager::Render(sf::RenderWindow& window) {
-	if (items.size() < 5)
+	if (items.size() < 5) {
 		scroll = 0;
+		bar.SetPosition(bar.GetPosition().x, 185);
+	}
 
 	RenderBackground(window);
 	RenderUI(sf::Mouse::getPosition(window), window);
@@ -101,6 +122,42 @@ void ScreenManager::RenderBackground(sf::RenderWindow& window) {
 	shade2.setFillColor(sf::Color(50, 50, 50, 75));
 	shade2.setOutlineColor(sf::Color::Transparent);
 
+	double totalSales = 0;
+	for (Item* item : items) {
+		totalSales += item->GetTotal();
+	}
+	sf::Text total(font, std::format("TOTAL: {0}${1:.2f}",(totalSales < 0) ? "-" : "", std::abs(totalSales)));
+	total.setCharacterSize(30);
+	total.setPosition({700, 125});
+
+	sf::ConvexShape titleBg(4);
+	titleBg.setPoint(0, { 0, 0 });
+	titleBg.setPoint(1, { 400, 0 });
+	titleBg.setPoint(2, { 500, 70 });
+	titleBg.setPoint(3, { 0, 70 });
+	titleBg.setFillColor(sf::Color(66, 66, 66));
+	titleBg.setOutlineColor(sf::Color::Transparent);
+
+	sf::ConvexShape titleTint(3);
+	titleTint.setPoint(0, { 0, 0 });
+	titleTint.setPoint(1, { 400, 0 });
+	titleTint.setPoint(2, { 500, 70 });
+	titleTint.setFillColor(sf::Color(255, 255, 255, 50));
+	titleTint.setOutlineColor(sf::Color::Transparent);
+
+	sf::Text title(font, "SALE TRACKER");
+	title.setCharacterSize(60);
+	title.setStyle(sf::Text::Bold);
+	title.setPosition({ 5, 0 });
+
+	sf::Sprite sprite(logo);
+	sprite.setScale({ 0.25f, 0.25f });
+	sprite.setPosition({ 62, 250 });
+
+	sf::Sprite sprite2(logo);
+	sprite2.setScale({ 0.25f, 0.25f });
+	sprite2.setPosition({ 910, 250 });
+
 	window.clear(sf::Color(94, 85, 105));
 	window.draw(border);
 	window.draw(border2);
@@ -109,6 +166,13 @@ void ScreenManager::RenderBackground(sf::RenderWindow& window) {
 	window.draw(tint2);
 	window.draw(shade1);
 	window.draw(shade2);
+	window.draw(total);
+	window.draw(titleBg);
+	window.draw(titleTint);
+	window.draw(title);
+	window.draw(sprite);
+	window.draw(sprite2);
+
 }
 
 void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {

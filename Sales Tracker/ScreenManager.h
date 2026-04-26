@@ -32,6 +32,9 @@ private:
 	int scrollTime = 0;
 	bool scrollEdge = false;
 
+	sf::Font font;
+	sf::Texture logo;
+
 	void RenderBackground(sf::RenderWindow& window);
 	void RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window);
 

@@ -2,8 +2,8 @@
 
 // Public
 
-TextBox::TextBox(Properties properties, std::string empty, std::string text, std::string font) :
-	empty(empty), Button(properties, text, font) {}
+TextBox::TextBox(Properties properties, std::string empty, std::string format, std::string text, std::string font) :
+	empty(empty), format(format), Button(properties, text, font) {}
 
 void TextBox::Press() {
 	editing = true;
@@ -43,10 +43,7 @@ void TextBox::Render(sf::RenderWindow& window) {
 	rect.setFillColor(sf::Color(227, 227, 227));
 	rect.setOutlineThickness(5);
 
-	sf::Text string(font, text);
-	int characterSize = std::min((properties.width * 2.2) / (text.length() + 1), 30.0);
-	string.setCharacterSize(characterSize);
-	string.setPosition({ properties.x, properties.y });
+	sf::Text string(font, std::format("{}", text));
 
 	if (editing)
 		rect.setOutlineColor(sf::Color(184, 48, 48));
@@ -61,6 +58,16 @@ void TextBox::Render(sf::RenderWindow& window) {
 		string.setString(empty);
 		string.setFillColor(sf::Color(138, 138, 138));
 	}
+
+	int characterSize = std::min((properties.width * 2.2) / (text.length() + 1), 30.0);
+	string.setCharacterSize(characterSize);
+	string.setOrigin(
+		{
+		string.getLocalBounds().position.x,
+		string.getLocalBounds().position.y + string.getLocalBounds().size.y / 2
+		}
+	);
+	string.setPosition({ properties.x , properties.y + properties.height / 2 });
 
 	window.draw(rect);
 	window.draw(string);

@@ -14,13 +14,14 @@ public:
 	void Render(sf::RenderWindow& window) override;
 
 	void SetPosition(float x, float y) override {
-		if (InBounds(y, properties.height))
-			Button::SetPosition(x, y);
+		float yBound = std::min(std::max(y, background.y + 1), background.y + background.height - properties.height);
+		Button::SetPosition(x, yBound);
 	}
 
 	void SetSize(float width, float height) override {
-		if (InBounds(properties.y, height))
-			Button::SetSize(width, height);
+		if (!InBounds(properties.y, height))
+			SetPosition(properties.x, properties.y - (height - properties.height));
+		Button::SetSize(width, height);
 	}
 
 	float GetScrollPercent() {

@@ -52,6 +52,7 @@ void Remove::Press() {
 
 Add::Add(std::vector<Item*>& list, Properties properties, std::string text, std::string font) :
 	list(list), Button(properties, text, font) {
+	fontPath = font;
 }
 
 void Add::Press() {
@@ -64,15 +65,15 @@ void Add::Press() {
 	Properties nameProps(0, 0, 300, 35, sf::Color::Blue);
 	Properties priceProps(0, 0, 75, 35, sf::Color::Blue);
 
-	Item* blank = new Item(itemProps);
+	Item* blank = new Item(itemProps, 0, "", fontPath);
 
-	Sale* sell = new Sale(blank, 1, sellProps, "$");
-	Sale* unsell = new Sale(blank, -1, unsellProps, "-");
-	Remove* remove = new Remove(list, blank, removeProps, "X");
+	Sale* sell = new Sale(blank, 1, sellProps, "$", fontPath);
+	Sale* unsell = new Sale(blank, -1, unsellProps, "-$", fontPath);
+	Remove* remove = new Remove(list, blank, removeProps, "X", fontPath);
 	blank->SetButtons(sell, unsell, remove);
 
-	TextBox* name = new TextBox(nameProps, "Blank");
-	TextBox* price = new TextBox(priceProps, "$0.00");
+	TextBox* name = new TextBox(nameProps, "Blank", "", fontPath);
+	TextBox* price = new TextBox(priceProps, "$0.00", "", fontPath);
 	blank->SetTextBoxes(name, price);
 
 	list.push_back(blank);

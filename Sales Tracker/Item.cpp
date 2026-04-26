@@ -106,4 +106,9 @@ void Item::Render(sf::RenderWindow& window) {
         nameBox->Render(window);
     if (priceBox != nullptr)
         priceBox->Render(window);
+
+    if (priceBox->GetText().size() > 0 && std::isdigit(priceBox->GetText()[0]))
+        profile.price = std::stod(priceBox->GetText());
+    else
+        profile.price = 0;
 }

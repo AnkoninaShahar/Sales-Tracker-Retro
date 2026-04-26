@@ -4,7 +4,7 @@
 class TextBox : public Button
 {
 public:
-	TextBox(Properties properties = Properties(), std::string empty = "", std::string text = "", std::string font = "Fonts\\Thraex.ttf");
+	TextBox(Properties properties = Properties(), std::string empty = "", std::format_string format = "{0}", std::string text = "", std::string font = "Fonts\\Thraex.ttf");
 	~TextBox() {}
 
 	void Press() override;
@@ -18,5 +18,6 @@ public:
 private:
 	bool editing = false;
 	std::string empty;
+	std::format_string format;
 };
 
