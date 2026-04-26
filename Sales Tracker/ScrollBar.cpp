@@ -2,48 +2,61 @@
 
 // Public
 
-ScrollBar::ScrollBar(Properties background, Properties bar, std::string text) :
-	background(background), my(0), Button(bar, text) {}
+ScrollBar::ScrollBar(Properties track, Properties bar, std::string text) :
+	track(track), mousePos(0), Button(bar, text) {}
 
 void ScrollBar::Press() {
-	SetPosition(properties.x, my - properties.height / 2);
+	SetPosition(mousePos - properties.height / 2);
 }
 
 bool ScrollBar::IsPressed(bool pressed, int mx, int my) {
 	bool result = pressed &&
-		(mx >= background.x && mx <= background.x + background.width) &&
-		(my >= background.y && my <= background.y + background.height);
+		(mx >= track.x && mx <= track.x + track.width) &&
+		(my >= track.y && my <= track.y + track.height);
 
 	if (result)
-		held = true;
-	if (!pressed)	
-		held = false;
+		status = PRESSED;
+	if (!mousePressed && !result)
+		status = IsHovering(mx, my) ? HOVER : NONE;
 
-	this->my = my;
+	mousePos = my;
 
-	return result || held;
+	mousePressed = pressed;
+
+	return result || status == PRESSED;
 }
 
-void ScrollBar::Move(float x, float y) {
+void ScrollBar::Move(float y) {
 	if (InBounds(properties.y + y, properties.height))
-		Button::Move(x, y);
+		Button::Move(properties.x, y);
 }
 
 void ScrollBar::Render(sf::RenderWindow& window) {
-	sf::RectangleShape backgroundShape({ background.width, background.height });
-	backgroundShape.setPosition({ background.x, background.y });
-	backgroundShape.setFillColor(background.color);
+	sf::RectangleShape trackShape({ track.width, track.height });
+	trackShape.setPosition({ track.x, track.y });
+	trackShape.setFillColor(track.color);
 
 	sf::RectangleShape barShape({ properties.width, properties.height });
 	barShape.setPosition({ properties.x, properties.y });
-	barShape.setFillColor(properties.color);
 
-	window.draw(backgroundShape);
+	switch (status) {
+	case HOVER:
+		barShape.setFillColor(sf::Color(200, 200, 200));
+		break;
+	case PRESSED:
+		barShape.setFillColor(sf::Color(112, 112, 112));
+		break;
+	default:
+		barShape.setFillColor(properties.color);
+		break;
+	}
+
+	window.draw(trackShape);
 	window.draw(barShape);
 }
 
 // Private
 
-bool ScrollBar::InBounds(float y, float height) {
-	return (y > background.y && y + height < background.y + background.height);
+bool ScrollBar::InBounds(float y, float height) const {
+	return (y > track.y && y + height < track.y + track.height);
 }

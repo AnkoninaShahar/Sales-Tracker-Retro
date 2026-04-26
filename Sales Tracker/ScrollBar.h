@@ -4,34 +4,34 @@
 class ScrollBar : public Button
 {
 public:
-	ScrollBar(Properties background = Properties(), Properties bar = Properties(), std::string text = "");
+	ScrollBar(Properties track = Properties(), Properties bar = Properties(), std::string text = "");
 
 	void Press() override;
 	bool IsPressed(bool pressed, int mx, int my) override;
 
-	void Move(float x, float y) override;
+	void Move(float y);
 
 	void Render(sf::RenderWindow& window) override;
 
-	void SetPosition(float x, float y) override {
-		float yBound = std::min(std::max(y, background.y + 1), background.y + background.height - properties.height);
-		Button::SetPosition(x, yBound);
+	void SetPosition(float y) {
+		float yBound = std::min(std::max(y, track.y + 1), track.y + track.height - properties.height);
+		Button::SetPosition(properties.x, yBound);
 	}
 
 	void SetSize(float width, float height) override {
 		if (!InBounds(properties.y, height))
-			SetPosition(properties.x, properties.y - (height - properties.height));
+			SetPosition(properties.y - (height - properties.height));
 		Button::SetSize(width, height);
 	}
 
-	float GetScrollPercent() {
-		return (properties.y - background.y) / (background.height - properties.height);
+	float GetScrollPercent() const {
+		return (properties.y - track.y) / (track.height - properties.height);
 	}
 
 private:
-	Properties background;
-	int my;
+	Properties track;
+	int mousePos;
 
-	bool InBounds(float y, float height);
+	bool InBounds(float y, float height) const;
 };
 

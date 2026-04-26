@@ -8,8 +8,8 @@
 class Sale : public Button
 {
 public:
-	Sale(Item* item = nullptr, int amount = 0, Properties properties = Properties(), std::string text = "", std::string font = "Fonts\\Thraex.ttf");
-	~Sale();
+	Sale(Item* item = nullptr, int amount = 0, Properties properties = Properties(), std::string text = "", std::string fontPath = "Fonts\\Thraex.ttf");
+	~Sale() noexcept;
 
 	void Press() override;
 
@@ -23,8 +23,8 @@ private:
 class Remove : public Button
 {
 public:
-	Remove(std::vector<Item*>& list, Item* item = nullptr, Properties properties = Properties(), std::string text = "", std::string font = "Fonts\\Thraex.ttf");
-	~Remove();
+	Remove(std::vector<Item*>& list, Item* item = nullptr, Properties properties = Properties(), std::string text = "", std::string fontPath = "Fonts\\Thraex.ttf");
+	~Remove() noexcept;
 
 	void Press() override;
 
@@ -38,7 +38,7 @@ private:
 class Add : public Button
 {
 public:
-	Add(std::vector<Item*>& list, Properties properties = Properties(), std::string text = "", std::string font = "Fonts\\Thraex.ttf");
+	Add(std::vector<Item*>& list, Properties properties = Properties(), std::string text = "", std::string fontPath = "Fonts\\Thraex.ttf");
 
 	void Press() override;
 

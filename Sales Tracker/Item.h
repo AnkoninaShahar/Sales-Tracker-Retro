@@ -12,9 +12,9 @@ using namespace Helper;
 class Item
 {
 public:
-    Item(Properties properties = Properties(), double price = 0, std::string name = "", std::string font = "Fonts\\Thraex.ttf");
-    Item(const Item& other);
-    ~Item();
+    Item(Properties properties = Properties(), double price = 0, std::string name = "", std::string fontPath = "Fonts\\Thraex.ttf");
+    Item(const Item& other) noexcept;
+    ~Item() noexcept;
 
     bool Interact(bool pressed, int mx, int my);
 
@@ -45,7 +45,7 @@ public:
         if (unsell != nullptr)
             unsell->SetPosition(x + 65, y + 10);
         if (remove != nullptr)
-            remove->SetPosition(x + 640, y + 10);
+            remove->SetPosition(x + 645, y + 10);
 
         if (nameBox != nullptr)
             nameBox->SetPosition(x + 125, y + 12);
@@ -53,20 +53,26 @@ public:
             priceBox->SetPosition(x + 445, y + 12);
     }
 
-    double GetTotal() {
+    double GetTotal() const {
         return profile.sold * profile.price;
     }
+
+    void Print() const;
 
     bool operator==(const Item& other) const {
         std::cout << this << "\t" << &other << std::endl;
         return this == &other;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const Item& item) {
+        return os << item.ToString() << std::endl;
+    }
+
 private:
     struct Profile {
-        int sold = 0;
-        double price = 0;
         std::string name = "";
+        double price = 0;
+        int sold = 0;
     };
     Profile profile;
     Properties properties;
@@ -79,5 +85,7 @@ private:
 
     TextBox* nameBox = nullptr;
     TextBox* priceBox = nullptr;
+
+    std::string ToString() const;
 };
 

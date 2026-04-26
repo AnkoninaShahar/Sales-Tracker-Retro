@@ -12,10 +12,8 @@ int main()
         {
             if (event->is<sf::Event::Closed>())
                 window.close();
-
             if (const auto* mouseWheel = event->getIf<sf::Event::MouseWheelScrolled>())
                 screen.Scroll(mouseWheel->delta, window);
-
             if (const auto* keyboard = event->getIf<sf::Event::TextEntered>())
                 screen.EditItem(static_cast<char>(keyboard->unicode));
           
