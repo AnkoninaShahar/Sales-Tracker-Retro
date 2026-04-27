@@ -1,8 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+/// <summary>
+/// Holds rectangular properties (position, size, and color). Provides a parameterized constructor, a copy constructor, and an assignment operator.
+/// </summary>
 namespace Helper
 {
+	// Struct to hold properties for graphical elements
     struct Properties {
         float x = 0, y = 0;
         float width = 0, height = 0;

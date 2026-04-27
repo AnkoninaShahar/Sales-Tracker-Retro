@@ -8,6 +8,7 @@ Item::Item(Properties properties, double price, std::string name, std::string fo
     profile.price = price;
     profile.name = name;
 
+	// Load the font from the specified file path and handle any exceptions that may occur during loading
     try {
         if (!font.openFromFile(fontPath))
             throw "FAILED TO LOAD FONT:\t" + fontPath;
@@ -18,6 +19,7 @@ Item::Item(Properties properties, double price, std::string name, std::string fo
 }
 
 Item::Item(const Item& other) noexcept {
+	// Perform a deep copy of the other Item's resources and member variables.
     properties = other.properties;
     profile = other.profile;
 
@@ -30,6 +32,7 @@ Item::Item(const Item& other) noexcept {
 }
 
 Item::~Item() noexcept {
+	// Clean up dynamically allocated resources for buttons and text boxes to prevent memory leaks. 
     if (sell != nullptr)
         delete sell;
     if (unsell != nullptr)
@@ -44,29 +47,33 @@ Item::~Item() noexcept {
 }
 
 bool Item::Interact(bool pressed, int mx, int my) {
+	// Check if any of the buttons (sell, unsell, remove) are pressed based on the current input state and mouse coordinates. 
     if (sell->IsPressed(pressed, mx, my))
-        sell->Press();
+        sell->Press(); 
     if (unsell->IsPressed(pressed, mx, my))
-        unsell->Press();
+        unsell->Press(); 
     if (remove->IsPressed(pressed, mx, my)) {
-        remove->Press();
+        remove->Press(); 
         return true;
     }
 
+	// Check if the nameBox or priceBox text boxes are pressed.
     if (nameBox->IsPressed(pressed, mx, my))
         nameBox->Press();
     if (priceBox->IsPressed(pressed, mx, my))
-        priceBox->Press();
+        priceBox->Press(); 
 
-    return false;
+	return false; // Return false to indicate that the item should not be removed based on the current interaction.
 }
 
 void Item::Edit(char character) {
+	// Handle character input for the nameBox and priceBox text boxes when they are in editing mode.
     if (nameBox != nullptr) {
         nameBox->Edit(character);
         profile.name = nameBox->GetText();
     }
 
+	// Handle character input for the priceBox text box and update the profile's price based on the current text in the priceBox. 
     if (priceBox != nullptr) {
         priceBox->Edit(character);
         if (priceBox->GetText().size() > 0 && std::isdigit(priceBox->GetText()[0]))
@@ -76,31 +83,29 @@ void Item::Edit(char character) {
     }
 }
 
-void Item::EndEdit() {
-    nameBox->ResetEditing();
-    priceBox->ResetEditing();
-}
-
 void Item::Sale(int amount) {
-    profile.sold += amount;
+	profile.sold += amount; // Update the profile's sold count by adding the specified amount to the existing sold count. 
 }
 
 void Item::Render(sf::RenderWindow& window) {
-    int ol[3] = { properties.color.r * 0.35, properties.color.g * 0.35, properties.color.b * 0.35 };
+    int ol[3] = { static_cast<int>(properties.color.r * 0.35), static_cast<int>(properties.color.g * 0.35), static_cast<int>(properties.color.b * 0.35) };
 
+	// Create a rectangle shape to represent the item, set its position, fill color, outline color, and outline thickness based on the item's properties. 
     sf::RectangleShape item({ properties.width, properties.height });
     item.setPosition({ properties.x, properties.y });
     item.setFillColor(sf::Color(194, 194, 194));
     item.setOutlineColor(sf::Color(ol[0], ol[1], ol[2]));
     item.setOutlineThickness(5);
-    window.draw(item);
+	window.draw(item); // Draw the rectangle shape for the item onto the window.
 
+	// Create SFML Text objects to display the item's name, price, and sold count, set their character size, fill color, and position based on the item's properties. 
     sf::Text sold(font, "Sold " + std::to_string(profile.sold));
     sold.setCharacterSize(30);
     sold.setFillColor(sf::Color::Black);
     sold.setPosition({ properties.x + 545, properties.y + 12 });
-    window.draw(sold);
+	window.draw(sold); // Draw the text for the sold count onto the window.
 
+    // Renders every button.
     if (sell != nullptr)
         sell->Render(window);
     if (unsell != nullptr)
@@ -108,6 +113,7 @@ void Item::Render(sf::RenderWindow& window) {
     if (remove != nullptr)
         remove->Render(window);
 
+    // Render every textbox.
     if (nameBox != nullptr)
         nameBox->Render(window);
     if (priceBox != nullptr)
@@ -115,12 +121,13 @@ void Item::Render(sf::RenderWindow& window) {
 }
 
 void Item::Print() const {
-    std::cout << ToString() << std::endl;
+	std::cout << ToString() << std::endl; // Print the string representation of the item to the console.
 }
 
 // Private
 
 std::string Item::ToString() const {
+	// Generate a string representation of the item, including its class name, profile information (name, price, sold count, total revenue), and properties (position, size, color). 
     std::string className = typeid(*this).name();
     std::string title = "===================================================================================================\n\n" +
         className +

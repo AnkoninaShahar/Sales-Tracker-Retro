@@ -2,20 +2,29 @@
 
 // Public
 
+
 ScreenManager::ScreenManager() :
 	items(std::vector<Item*>()),
-	add(items, Properties(230, 90, 200, 50, sf::Color(54, 176, 46)), "ADD ITEM", "Fonts\\Shelten.ttf"),
+	add(items, Properties(230, 90, 200, 50, sf::Color(54, 176, 46)), "ADD ITEM", "Assets\\Fonts\\Shelten.ttf"),
 	bar(Properties(856, 180, 40, 300, sf::Color(18, 18, 18)),
 		Properties(861, 185, 30, 50, sf::Color(166, 166, 166)))
 {
-	scrollView.setSize({ 700, 330 });
+	// INITIALIZE SCROLLING
+	// _____________________________________________________
+
+	// Initialize variables utilized for managing the scroll view and scrolling behavior. 
+	scrollView.setSize({ 700, 330 }); 
 	scrollView.setViewport(sf::FloatRect({ 0.2f, 0.3f }, { 0.565f, 0.5f }));
 	scroll = 0;
 	prevScroll = 0;
 
-	std::string font = "Fonts\\Shelten.ttf";
-	std::string logoPath = "Sprites\\gift_logo.png";
 
+	// LOAD FONT & LOGO
+	// _____________________________________________________
+
+	// Attempt to load the font from the specified file path. 
+	// If the font fails to load, catch the exception and print an error message to the standard error stream.
+	std::string font = "Assets\\Fonts\\Shelten.ttf";
 	try {
 		if (!this->font.openFromFile(font))
 			throw "FAILED TO LOAD FONT:\t" + font;
@@ -24,6 +33,9 @@ ScreenManager::ScreenManager() :
 		std::cerr << msg << std::endl;
 	}
 
+	// Attempt to load the logo texture from the specified file path. 
+	// If the texture fails to load, catch the exception and print an error message to the standard error stream.
+	std::string logoPath = "Assets\\Sprites\\gift_logo.png";
 	try {
 		if (!logo.loadFromFile(logoPath))
 			throw "FAILED TO LOAD TEXTURE:\t" + logoPath;
@@ -32,158 +44,80 @@ ScreenManager::ScreenManager() :
 		std::cerr << msg << std::endl;
 	}
 
-	std::srand(static_cast<unsigned int>(time(NULL)));
+	// Seed the random number generator with the current time to ensure that any subsequent calls to random functions produce different sequences of random numbers each time the program is run.
+	std::srand(static_cast<unsigned int>(time(NULL))); 
 }
 
-ScreenManager::~ScreenManager() {
+ScreenManager::~ScreenManager() noexcept {
+	// Clean up dynamically allocated memory for items to prevent memory leaks. 
 	for (Item* item : items) {
 		delete item;
 	}
 }
 
 void ScreenManager::Scroll(float scroll, sf::RenderWindow& window) {
+	// Adjust the scroll position by the specified amount.
 	if (MouseInScrollWindow(sf::Mouse::getPosition(window), window) && items.size() > 4)
 		this->scroll += scroll * 10;
 }
 
 void ScreenManager::EditItem(char character) {
+	// Iterate through all items in the vector and call their Edit method, passing the specified character as an argument. 
 	for (Item* item : items) {
 		item->Edit(character);
 	}
 }
 
 void ScreenManager::Render(sf::RenderWindow& window) {
+	// If there are fewer than 5 items, reset the scroll position to 0 and set the scroll bar position to 185. 
 	if (items.size() < 5) {
 		scroll = 0;
 		bar.SetPosition(185);
 	}
 
-	RenderBackground(window);
-	RenderUI(sf::Mouse::getPosition(window), window);
+	RenderBackground(window); // Render the background elements of the screen, including any static visuals or decorations that form the backdrop for the user interface.
+	RenderUI(sf::Mouse::getPosition(window), window); // Render the user interface elements, potentially using the current mouse position for interaction. This includes rendering buttons, scroll bars, and any interactive components that allow the user to interact with the application.
 
-	CorrectScroll();
+	CorrectScroll(); // Adjust the scroll position to ensure it stays within valid bounds.
 }
 
 // Private
 
-void ScreenManager::RenderBackground(sf::RenderWindow& window) {
+void ScreenManager::RenderBackground(sf::RenderWindow& window) const {
+	// RENDER BACKGROUND ELEMENTS
+	// _____________________________________________________
+
+	// Set the view of the window to the default view, which is typically a view that covers the entire render target. 
+	// This ensures that subsequent drawing operations are performed in the context of the default coordinate system and viewport.
 	window.setView(window.getDefaultView());
+	window.clear(sf::Color(94, 85, 105));
 
-	sf::RectangleShape border({ 1100, 580 });
-	border.setPosition({ 10, 10 });
-	border.setOutlineThickness(50);
-	border.setOutlineColor(sf::Color::Black);
-	border.setFillColor(sf::Color::Transparent);
-
-	sf::RectangleShape border2({ 1060, 540 });
-	border2.setPosition({ 30, 30 });
-	border2.setOutlineThickness(50);
-	border2.setOutlineColor(sf::Color(0, 0, 0, 100));
-	border2.setFillColor(sf::Color::Transparent);
-
-	sf::RectangleShape border3({ 1020, 500 });
-	border3.setPosition({ 50, 50 });
-	border3.setOutlineThickness(100);
-	border3.setOutlineColor(sf::Color(0, 0, 0, 50));
-	border3.setFillColor(sf::Color::Transparent);
-
+	// Draw background elements such as borders, title, and logos. 
 	sf::FloatRect rect = sf::FloatRect(
 		{ scrollView.getViewport().position.x * 1120, scrollView.getViewport().position.y * 600 },
 		{ scrollView.getViewport().size.x * 1120, scrollView.getViewport().size.y * 600 }
 	);
+	RenderIndentBorder(window, rect, 20);
+	RenderBorder(window, { 10, 10 }, { 1100, 580 }, sf::Color::Black, 50);
+	RenderTitle(window);
+	RenderSprite(window, logo, { 62, 250 }, { 0.25f, 0.25f });
+	RenderSprite(window, logo, { 922, 250 }, { 0.25f, 0.25f });
 
-	sf::ConvexShape tint1(4);
-	tint1.setPoint(0, { rect.position.x - 20, rect.position.y - 20 });
-	tint1.setPoint(1, { rect.position.x + rect.size.x + 60, rect.position.y - 20 });
-	tint1.setPoint(2, { rect.position.x + rect.size.x + 40, rect.position.y });
-	tint1.setPoint(3, { rect.position.x, rect.position.y });
-	tint1.setFillColor(sf::Color(255, 255, 255, 75));
-	tint1.setOutlineColor(sf::Color::Transparent);
+	// RENDER TOTAL
+	// _____________________________________________________
 
-	sf::ConvexShape tint2(4);
-	tint2.setPoint(0, { rect.position.x + rect.size.x + 60, rect.position.y - 20 });
-	tint2.setPoint(1, { rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + 20 });
-	tint2.setPoint(2, { rect.position.x + rect.size.x + 40, rect.position.y + rect.size.y });
-	tint2.setPoint(3, { rect.position.x + rect.size.x + 40, rect.position.y });
-	tint2.setFillColor(sf::Color(200, 200, 200, 75));
-	tint2.setOutlineColor(sf::Color::Transparent);
-
-	sf::ConvexShape shade1(4);
-	shade1.setPoint(0, { rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + 20 });
-	shade1.setPoint(1, { rect.position.x - 20, rect.position.y + rect.size.y + 20 });
-	shade1.setPoint(2, { rect.position.x, rect.position.y + rect.size.y });
-	shade1.setPoint(3, { rect.position.x + rect.size.x + 40, rect.position.y + rect.size.y });
-	shade1.setFillColor(sf::Color(0, 0, 0, 75));
-	shade1.setOutlineColor(sf::Color::Transparent);
-
-	sf::ConvexShape shade2(4);
-	shade2.setPoint(0, { rect.position.x - 20, rect.position.y + rect.size.y + 20 });
-	shade2.setPoint(1, { rect.position.x - 20, rect.position.y - 20 });
-	shade2.setPoint(2, { rect.position.x, rect.position.y });
-	shade2.setPoint(3, { rect.position.x, rect.position.y + rect.size.y });
-	shade2.setFillColor(sf::Color(50, 50, 50, 75));
-	shade2.setOutlineColor(sf::Color::Transparent);
-
+	// Calculate the total sales by iterating through all items and summing their total values. 
+	// The total is then displayed as text on the screen.
 	double totalSales = 0;
 	for (Item* item : items) {
 		totalSales += item->GetTotal();
 	}
 	sf::Text total(font, std::format("TOTAL: {0}${1:.2f}",(totalSales < 0) ? "-" : "", std::abs(totalSales)));
 	total.setCharacterSize(30);
-	total.setPosition({700, 125});
-
-	sf::ConvexShape titleBg(4);
-	titleBg.setPoint(0, { 0, 0 });
-	titleBg.setPoint(1, { 400, 0 });
-	titleBg.setPoint(2, { 500, 70 });
-	titleBg.setPoint(3, { 0, 70 });
-	titleBg.setFillColor(sf::Color(66, 66, 66));
-	titleBg.setOutlineColor(sf::Color::Transparent);
-
-	sf::ConvexShape titleTint(3);
-	titleTint.setPoint(0, { 0, 0 });
-	titleTint.setPoint(1, { 400, 0 });
-	titleTint.setPoint(2, { 500, 70 });
-	titleTint.setFillColor(sf::Color(255, 255, 255, 50));
-	titleTint.setOutlineColor(sf::Color::Transparent);
-
-	sf::Text title(font, "SALE TRACKER");
-	title.setCharacterSize(60);
-	title.setStyle(sf::Text::Bold);
-	title.setPosition({ 5, 0 });
-
-	sf::Sprite sprite(logo);
-	sprite.setScale({ 0.25f, 0.25f });
-	sprite.setPosition({ 62, 250 });
-
-	sf::Sprite sprite2(logo);
-	sprite2.setScale({ 0.25f, 0.25f });
-	sprite2.setPosition({ 922, 250 });
-
-	sf::RectangleShape bg1({ 110, 105 });
-	bg1.setPosition({ 75, 280 });
-	bg1.setFillColor(sf::Color(255, 255, 255, 160));
-
-	sf::RectangleShape bg2({ 110, 105 });
-	bg2.setPosition({ 935, 280 });
-	bg2.setFillColor(sf::Color(255, 255, 255, 160));
-
-	window.clear(sf::Color(94, 85, 105));
-	window.draw(border);
-	window.draw(border2);
-	window.draw(border3);
-	window.draw(tint1);
-	window.draw(tint2);
-	window.draw(shade1);
-	window.draw(shade2);
-	window.draw(total);
-	window.draw(titleBg);
-	window.draw(titleTint);
-	window.draw(title);
-	window.draw(bg1);
-	window.draw(bg2);
-	window.draw(sprite);
-	window.draw(sprite2);
+	total.setPosition({700, 120});
+	total.setOutlineThickness(3);
+	total.setOutlineColor(sf::Color::Black);
+	window.draw(total); // Draw the total sales text on the window at the specified position.
 
 }
 
@@ -191,30 +125,37 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 
 	// RENDER ADD BUTTON
 	//_____________________________________________________
-	window.setView(window.getDefaultView());
+
+	// Convert the mouse position from pixel coordinates to world coordinates using the default view of the window. 
 	sf::Vector2f worldPos = window.mapPixelToCoords(mousePos, window.getDefaultView());
 	add.Render(window);
-	if (add.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), worldPos.x, worldPos.y))
+	// Check if the add button is being pressed by the user. 
+	if (add.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), static_cast<int>(worldPos.x), static_cast<int>(worldPos.y)))
 		add.Press();
 
 	// RENDER SCROLL BAR
 	//_____________________________________________________
+
+	// Calculate the length of the scroll bar based on the number of items in the list.
 	float length = 290;
 	for (int i = 0; i < static_cast<int>(items.size() - 4); ++i) {
 		length -= length / (i + 4);
 	}
 	bar.SetSize(bar.GetSize().x, length);
 	bar.Render(window);
-	if (items.size() > 4 && bar.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), worldPos.x, worldPos.y)) {
+	// Check if the scroll bar is being pressed by the user. 
+	if (items.size() > 4 && bar.IsPressed(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), static_cast<int>(worldPos.x), static_cast<int>(worldPos.y))) {
 		bar.Press();
 		float distance = -static_cast<float>(items.size() - 4.5) * 70;
 		scroll = distance * bar.GetScrollPercent();
 	}
 	else
-		bar.SetPosition(-(this->scroll / ((items.size() - 4.25) * 70)) * (300 - bar.GetSize().y) + 180);
+		bar.SetPosition(static_cast<float>(-(this->scroll / ((items.size() - 4.5) * 70)) * (300 - bar.GetSize().y) + 180));
 
 	// RENDER ITEM WINDOW
 	//_____________________________________________________
+
+	// Render a semi-transparent rectangle as the background for the item window.
 	sf::FloatRect rect = sf::FloatRect(
 		{ scrollView.getViewport().position.x * 1120, scrollView.getViewport().position.y * 600 },
 		{ scrollView.getViewport().size.x * 1120, scrollView.getViewport().size.y * 600 }
@@ -222,13 +163,16 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	sf::RectangleShape shape = sf::RectangleShape({ rect.size.x, rect.size.y });
 	shape.setPosition({ rect.position.x, rect.position.y });
 	shape.setFillColor(sf::Color(0, 0, 0, 150));
-	window.draw(shape);
+	window.draw(shape); // Draw the semi-transparent rectangle on the window to serve as the background for the item display area.
 
 	// RENDER ITEMS
 	//_____________________________________________________	
+
+	// Set the view of the window to the scroll view, which allows for rendering the items in a coordinate space that can be scrolled.
 	window.setView(scrollView);
 	worldPos = window.mapPixelToCoords(mousePos, scrollView);
 
+	// If there are items in the list, iterate through each item and render and interact with it on the window.
 	if (items.size() > 0) {
 		for (int i = 0; i < items.size(); ++i) {
 			if (items[i]->Interact(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left), static_cast<int>(worldPos.x), static_cast<int>(worldPos.y))) {
@@ -241,13 +185,110 @@ void ScreenManager::RenderUI(sf::Vector2i mousePos, sf::RenderWindow& window) {
 	}
 }
 
-bool ScreenManager::MouseInScrollWindow(sf::Vector2i mousePos, sf::RenderWindow& window) {
+void ScreenManager::RenderBorder(sf::RenderWindow& window, sf::Vector2f position, sf::Vector2f size, sf::Color color, int thickness) const {
+	// Render a border around a specified area by drawing multiple rectangles with decreasing size and increasing transparency. 
+	sf::RectangleShape border;
+	for (int i = 0; i < 3; ++i) {
+		border.setSize({ size.x - i * 40, size.y - i * 40 });
+		border.setPosition({ position.x + i * 20, position.y + i * 20 });
+		border.setOutlineThickness(50);
+		border.setOutlineColor(sf::Color(color.r, color.b, color.g, 255 - i * 100));
+		border.setFillColor(sf::Color::Transparent);
+		window.draw(border); // Draw the current layer of the border on the window.
+	}
+}
+
+void ScreenManager::RenderIndentBorder(sf::RenderWindow& window, sf::FloatRect rect, int indent) const {
+	// Create an array of colors with varying levels of transparency to be used for rendering the indent border.
+	sf::Color colors[4] = { sf::Color(255, 255, 255, 75), sf::Color(200, 200, 200, 75),
+		sf::Color(20, 20, 20, 75), sf::Color(50, 50, 50, 75) };	
+	// Define an array of points that represent the vertices of the indent border. 
+	sf::Vector2f points[16] = {
+		{ rect.position.x - indent, rect.position.y - indent },
+		{ rect.position.x + rect.size.x + 60, rect.position.y - indent },
+		{ rect.position.x + rect.size.x + 60 - indent, rect.position.y },
+		{ rect.position.x, rect.position.y },
+
+		{ rect.position.x + rect.size.x + 60, rect.position.y - indent },
+		{ rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + indent },
+		{ rect.position.x + rect.size.x + 60 - indent, rect.position.y + rect.size.y },
+		{ rect.position.x + rect.size.x + 60 - indent, rect.position.y },
+
+		{ rect.position.x + rect.size.x + 60, rect.position.y + rect.size.y + indent },
+		{ rect.position.x - indent, rect.position.y + rect.size.y + indent },
+		{ rect.position.x, rect.position.y + rect.size.y },
+		{ rect.position.x + rect.size.x + 60 - indent, rect.position.y + rect.size.y },
+
+		{ rect.position.x - indent, rect.position.y + rect.size.y + indent },
+		{ rect.position.x - indent, rect.position.y - indent },
+		{ rect.position.x, rect.position.y },
+		{ rect.position.x, rect.position.y + rect.size.y }
+	};
+
+	// Render the indent border by drawing four convex shapes, each representing a layer of the border. 
+	sf::ConvexShape edge(4);
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			edge.setPoint(j, points[j + i * 4]);
+		}
+		edge.setFillColor(colors[i]);
+		edge.setOutlineColor(sf::Color::Transparent);
+		window.draw(edge); // Draw the current layer of the indent border on the window.
+	}
+}
+
+void ScreenManager::RenderTitle(sf::RenderWindow& window) const {
+	sf::ConvexShape titleBg(4);
+	titleBg.setPoint(0, { 0, 0 });
+	titleBg.setPoint(1, { 400, 0 });
+	titleBg.setPoint(2, { 500, 70 });
+	titleBg.setPoint(3, { 0, 70 });
+	titleBg.setFillColor(sf::Color(66, 66, 66));
+	titleBg.setOutlineColor(sf::Color::Transparent);
+	window.draw(titleBg); // Draw the background shape for the title.
+
+	sf::ConvexShape titleT(5);
+	titleT.setPoint(0, { 0, 0 });
+	titleT.setPoint(1, { 400, 0 });
+	titleT.setPoint(2, { 500, 70 });
+	titleT.setPoint(3, { 400, 20 });
+	titleT.setPoint(4, { 0, 20 });
+	titleT.setFillColor(sf::Color(255, 255, 255, 50));
+	titleT.setOutlineColor(sf::Color::Transparent);
+	window.draw(titleT); // Draw an additional shape for the title.
+
+	sf::Text title(font, "SALE TRACKER");
+	title.setPosition({ 5, 0 });
+	title.setCharacterSize(60);
+	title.setStyle(sf::Text::Bold);
+	title.setOutlineThickness(5);
+	title.setOutlineColor(sf::Color::Black);
+	window.draw(title); // Draw the title text on the window using the specified font, character size, and style. 
+}
+
+void ScreenManager::RenderSprite(sf::RenderWindow& window, sf::Texture texture, sf::Vector2f position, sf::Vector2f scale) const {
+	// Render a background rectangle for the sprite, positioned and sized based on the provided position and scale parameters. 
+	sf::RectangleShape bg({ 440 * scale.x, 420 * scale.y });
+	bg.setPosition({ position.x + 55 * scale.x, position.y + 120 * scale.y });
+	bg.setFillColor(sf::Color(255, 255, 255, 160));
+	window.draw(bg); // Draw the background rectangle for the sprite on the window.
+
+	// Render the sprite using the specified texture, position, and scale.
+	sf::Sprite sprite(texture);
+	sprite.setScale(scale);
+	sprite.setPosition(position);
+	window.draw(sprite); // Draw the sprite on the window using the specified texture, scale, and position. 
+}
+
+bool ScreenManager::MouseInScrollWindow(sf::Vector2i mousePos, sf::RenderWindow& window) const {
+	// Check if the mouse cursor is within the bounds of the scrollable area defined by the scroll view's viewport. 
 	sf::FloatRect rect = scrollView.getViewport();
 	return (mousePos.x >= rect.position.x * window.getSize().x && mousePos.x <= (rect.position.x + rect.size.x) * window.getSize().x)
 		&& (mousePos.y >= rect.position.y * window.getSize().y && mousePos.y <= (rect.position.y + rect.size.y) * window.getSize().y);
 }
 
 void ScreenManager::CorrectScroll() {
+	// Adjust the scroll position to ensure it stays within valid bounds based on the number of items and the size of the scrollable area. 
 	if (items.size() > 4) {
 		int maxScroll = 70 * static_cast<int>((items.size() - 4)) - 30;
 		if (scrollTime >= 35 && prevScroll == scroll) {
