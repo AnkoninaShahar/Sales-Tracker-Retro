@@ -1,10 +1,10 @@
-# Sale Tracker
+# Sale Tracker Retro
 **AUTHOR . . . . . . .** Shahar Ankonina                                                                                     
 **DESCRIPTION. . .** A desktop sale tracking application built in C++ using SFML, featuring dynamic item management, interactive UI controls, real-time total calculations, and custom scrollable views
 
 ---
 ## About
-Sale Tracker is a desktop GUI application built in C++ using SFML for managing and tracking sale items. The architecture is modular and object-oriented, featuring custom UI components like interactive buttons, editable text boxes, price-formatted inputs, and a dynamic scrollbar. 
+Sale Tracker is a desktop GUI application originally built for the local theater company **GIFT** to assist with small bake sales. Developed in C++ using SFML, the architecture is modular and object-oriented, featuring custom UI components like interactive buttons, editable text boxes, price-formatted inputs, and a dynamic scrollbar.
 
 The application handles dynamic memory management for user-created elements, computes real-time total sales revenue, and supports audio feedback such as click and keyboard sound effects during user interaction.
 
