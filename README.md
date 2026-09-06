@@ -28,6 +28,7 @@ The application handles dynamic memory management for user-created elements, com
 - Open the application window, click the **"ADD ITEM"** button to create a new row, click into the text or price fields to edit details, and use the sale buttons to update quantities.
 - Ensure asset folders (`Assets\\Fonts\\`, `Assets\\Sounds\\`, `Assets\\Sprites\\`) remain accessible relative to the executable path so textures, fonts, and audio files load correctly.
 
+---
 ### Build & Run
 Requires a C++ compiler set up with SFML. On Windows, open the solution file or project structure in Visual Studio, configure the build settings to match your SFML environment, and build/run the project.
 
