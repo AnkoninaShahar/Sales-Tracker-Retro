@@ -34,3 +34,8 @@ Requires a C++ compiler set up with SFML. On Windows, open the solution file or 
 *(Note: A prebuilt executable is also included in the repository folder for quick testing).*
 
 - Explore the codebase (`ScreenManager`, `Item`, `Button`, `TextBox`) to see how modular, object-oriented GUI components are structured using SFML.
+
+### Preview
+
+<img width="1120" height="632" alt="image" src="https://github.com/user-attachments/assets/e8d8d042-5c01-42c7-a9dc-92e287564abd" />
+
